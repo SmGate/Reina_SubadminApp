@@ -7,7 +7,9 @@ import '../service/visitors_logs_service.dart';
 class VisitorsLogsController extends GetxController {
   var user = Get.arguments;
   late final User userdata;
-
+  var isLoading = false.obs;
+  var currentPage = 1.obs;
+  var hasMore = true.obs;
   var visitorsLogsModel = VisitorsLogsModel();
   RxString error = "".obs;
 

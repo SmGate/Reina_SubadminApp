@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:societyadminapp/Module/Report%20Notifications/Controller/notifications_controller.dart';
 import 'package:societyadminapp/Module/Report%20Notifications/Model/Notification.dart';
 import 'package:societyadminapp/Routes/set_routes.dart';
+import 'package:societyadminapp/Widgets/app_gradient.dart';
 import 'package:societyadminapp/Widgets/loading.dart';
 import 'package:societyadminapp/utils/Constants/app_images.dart';
 import 'package:societyadminapp/utils/Extensions/extensions.dart';
@@ -332,7 +332,7 @@ class ReportNotificationsScreen extends GetView {
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: <Widget>[
                                                                                 Padding(
-                                                                                  padding: EdgeInsets.only(left: 37.w, top: 55.29.h),
+                                                                                  padding: EdgeInsets.only(left: 37.w, top: 20.29.h),
                                                                                   child: Text(
                                                                                     'Reason',
                                                                                     style: GoogleFonts.montserrat(color: HexColor('#4D4D4D'), fontStyle: FontStyle.normal, fontSize: ScreenUtil().setSp(14), fontWeight: FontWeight.w500),
@@ -380,41 +380,23 @@ class ReportNotificationsScreen extends GetView {
                                                                                   ),
                                                                                 ),
                                                                                 48.ph,
-                                                                                InkWell(
-                                                                                  onTap: () {
-                                                                                    if (controller.formKey.currentState!.validate()) {
-                                                                                      controller.RejectButtonApi(snapshot.data![index].id!, snapshot.data![index].userid!, controller.rejectcontroller.text, controller.userData.bearerToken!);
-                                                                                      Get.back();
-                                                                                    } else {
-                                                                                      return null;
-                                                                                    }
-                                                                                  },
-                                                                                  child: Center(
-                                                                                    child: Container(
-                                                                                      height: 43.0.h,
-                                                                                      width: 180.0.w,
-                                                                                      decoration: BoxDecoration(
-                                                                                        borderRadius: BorderRadius.circular(10.r),
-                                                                                        color: primaryColor,
-                                                                                        boxShadow: [
-                                                                                          BoxShadow(spreadRadius: 2, blurRadius: 12, color: Color.fromARGB(255, 128, 126, 126))
-                                                                                        ],
-                                                                                      ),
-                                                                                      child: Center(
-                                                                                          child: Text(
-                                                                                        'Save',
-                                                                                        style: GoogleFonts.ubuntu(color: HexColor('#FFFFFF')),
-                                                                                      )),
-                                                                                    ),
+                                                                                Center(
+                                                                                  child: MyButton(
+                                                                                    gradient: AppGradients.buttonGradient,
+                                                                                    name: "Save",
+                                                                                    onPressed: () {
+                                                                                      if (controller.formKey.currentState!.validate()) {
+                                                                                        controller.RejectButtonApi(snapshot.data![index].id!, snapshot.data![index].userid!, controller.rejectcontroller.text, controller.userData.bearerToken!);
+                                                                                        Get.back();
+                                                                                      } else {
+                                                                                        return null;
+                                                                                      }
+                                                                                    },
                                                                                   ),
-                                                                                ),
+                                                                                )
                                                                               ],
                                                                             ),
                                                                           ),
-                                                                          CircleAvatar(
-                                                                              backgroundColor: primaryColor,
-                                                                              maxRadius: 30.0,
-                                                                              child: SvgPicture.asset('assets/reason_vector.svg')),
                                                                         ],
                                                                       )),
                                                                 );

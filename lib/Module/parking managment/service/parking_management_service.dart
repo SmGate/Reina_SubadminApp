@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:societyadminapp/Module/parking%20managment/model/add_parking_model.dart';
 import 'package:societyadminapp/Module/parking%20managment/model/assign_parking_model.dart';
 import 'package:societyadminapp/Module/parking%20managment/model/get_area_slots_model.dart';
+import 'package:societyadminapp/Module/parking%20managment/model/update_parking_model.dart';
 import 'package:societyadminapp/utils/Constants/api_routes.dart';
 import 'package:societyadminapp/utils/Constants/base_client.dart';
 
@@ -65,6 +66,30 @@ class ParkingManagmentService {
 
       if (res is http.Response) {
         return assignParkingModelFromJson(res.body);
+      } else {
+        return res;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  static Future<dynamic> updateParking({
+    String? slotId,
+    String? residentId,
+    String? status,
+  }) async {
+    try {
+      var url = "${Api.updateParking}/$slotId";
+      Map data = {
+        "resident_id": residentId,
+        "status": status,
+      };
+
+      var res = await BaseClientClass.post(url, data);
+
+      if (res is http.Response) {
+        return updateParkingModelFromJson(res.body);
       } else {
         return res;
       }

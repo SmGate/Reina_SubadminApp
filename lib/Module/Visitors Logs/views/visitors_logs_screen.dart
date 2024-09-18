@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,7 @@ import 'package:societyadminapp/Routes/set_routes.dart';
 import 'package:societyadminapp/Widgets/app_gradient.dart';
 import 'package:societyadminapp/Widgets/custom_card.dart';
 import 'package:societyadminapp/Widgets/my_back_button.dart';
+import 'package:societyadminapp/utils/Constants/api_routes.dart';
 import 'package:societyadminapp/utils/Extensions/extensions.dart';
 import 'package:societyadminapp/utils/style/colors/app_colors.dart';
 
@@ -125,9 +127,10 @@ class VisitorsLogsScreen extends StatelessWidget {
                                                 DetailShownDialogBox(
                                                   heading: "Vehicle No",
                                                   text: visitorsLogsController
-                                                      .visitorsLogsModel
-                                                      .data?[index]
-                                                      .vechileno,
+                                                          .visitorsLogsModel
+                                                          .data?[index]
+                                                          .vechileno ??
+                                                      "NA",
                                                   icon: AppImages.vahicleNo,
                                                   isPng: true,
                                                 ),
@@ -139,17 +142,27 @@ class VisitorsLogsScreen extends StatelessWidget {
                                                               .data?[index]
                                                               .arrivaldate
                                                               .toString() ??
-                                                          ""),
+                                                          "NA"),
                                                   icon: AppImages.date2,
                                                   isPng: true,
                                                 ),
                                                 DetailShownDialogBox(
-                                                  heading: "Arrival Time",
+                                                  heading: "Check In Time",
                                                   text: visitorsLogsController
-                                                      .visitorsLogsModel
-                                                      .data?[index]
-                                                      .arrivaltime
-                                                      .toString(),
+                                                          .visitorsLogsModel
+                                                          .data?[index]
+                                                          .checkintime ??
+                                                      "NA",
+                                                  icon: AppImages.timeIcon,
+                                                  isPng: false,
+                                                ),
+                                                DetailShownDialogBox(
+                                                  heading: "Check Out Time",
+                                                  text: visitorsLogsController
+                                                          .visitorsLogsModel
+                                                          .data?[index]
+                                                          .checkouttime ??
+                                                      "NA",
                                                   icon: AppImages.timeIcon,
                                                   isPng: false,
                                                 ),
@@ -186,14 +199,44 @@ class VisitorsLogsScreen extends StatelessWidget {
                                   left: 20, right: 20, top: 10, bottom: 10),
                               child: Row(
                                 children: [
-                                  Container(
-                                    decoration:
-                                        BoxDecoration(shape: BoxShape.circle),
-                                    child: Image.asset(
-                                      AppImages.user,
-                                      height: 50,
-                                    ),
-                                  ),
+                                  visitorsLogsController.visitorsLogsModel
+                                                  .data?[index].image ==
+                                              "" ||
+                                          visitorsLogsController
+                                                  .visitorsLogsModel
+                                                  .data?[index]
+                                                  .image ==
+                                              null
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle),
+                                          child: Image.asset(
+                                            AppImages.user,
+                                            height: 50,
+                                          ),
+                                        )
+                                      : Container(
+                                          height: 40,
+                                          width: 40,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(300),
+                                            child: CachedNetworkImage(
+                                              imageUrl:
+                                                  "${Api.imageBaseUrl}${visitorsLogsController.visitorsLogsModel.data?[index].image}",
+                                              placeholder: (context, url) =>
+                                                  CircularProgressIndicator(
+                                                color: AppColors.appThem,
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
@@ -234,9 +277,10 @@ class VisitorsLogsScreen extends StatelessWidget {
                                                 children: [
                                                   Text("Visitor Type"),
                                                   Text("Vehicle No"),
+                                                  // Text("Status"),
                                                 ]),
                                             SizedBox(
-                                              width: 20,
+                                              width: 40,
                                             ),
                                             Column(
                                               crossAxisAlignment:

@@ -412,10 +412,10 @@ class HomeScreen extends GetView {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           MenuItems(
-                            image: AppImages.visitorDetails,
-                            title: "Society\nVisitors\nDetails",
+                            image: AppImages.visitorsLogs,
+                            title: "Visitors\nLogs",
                             ontap: () async {
-                              Get.offNamed(visitorDetails,
+                              Get.offNamed(visitorsLogs,
                                   arguments: controller.user);
                             },
                           ),
@@ -461,14 +461,6 @@ class HomeScreen extends GetView {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           MenuItems(
-                            image: AppImages.visitorsLogs,
-                            title: "Visitors\nLogs",
-                            ontap: () async {
-                              Get.offNamed(visitorsLogs,
-                                  arguments: controller.user);
-                            },
-                          ),
-                          MenuItems(
                             image: AppImages.logout,
                             title: "Logout",
                             ontap: () async {
@@ -476,6 +468,9 @@ class HomeScreen extends GetView {
                               Get.offAllNamed(login);
                             },
                           ),
+                          SizedBox(
+                            width: 150,
+                          )
                         ],
                       ),
 

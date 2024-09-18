@@ -7,6 +7,7 @@ import 'package:societyadminapp/Module/parking%20managment/service/parking_manag
 import 'package:societyadminapp/Routes/set_routes.dart';
 
 import '../../../Model/User.dart';
+import '../model/update_parking_model.dart';
 
 class ParkingManagementController extends GetxController {
   var userdata = Get.arguments;
@@ -16,6 +17,7 @@ class ParkingManagementController extends GetxController {
   TextEditingController slotsContingController = TextEditingController();
   final formKey = new GlobalKey<FormState>();
   final formKey1 = new GlobalKey<FormState>();
+  final formKey3 = new GlobalKey<FormState>();
   RxString errorAddingParking = "".obs;
   var addParkingModel = AddParkingModel();
   var getParkingSlotsModel = GetAreaAndSlotsModel();
@@ -42,6 +44,11 @@ class ParkingManagementController extends GetxController {
   ////// REFRESH PARKING SLOTS DATA
   RxBool loading1 = false.obs;
   RxString errorRefreshingSlots = "".obs;
+
+  //////// UPDATE PARKING
+  RxBool loadingUpdatingParking = false.obs;
+  RxString errorUpdatingParking = "".obs;
+  var updateParkingModel = UpdateParkingModel();
   @override
   void onInit() async {
     super.onInit();
@@ -89,6 +96,31 @@ class ParkingManagementController extends GetxController {
     }
   }
 
+  void updateParking(
+      {String? slotId,
+      String? residentId,
+      String? status,
+      BuildContext? context}) async {
+    loadingUpdatingParking.value = true;
+    errorUpdatingParking.value = "";
+
+    var res = await ParkingManagmentService.updateParking(
+        slotId: slotId, residentId: residentId, status: status);
+    loadingUpdatingParking.value = false;
+    if (res is UpdateParkingModel) {
+      updateParkingModel = res;
+      searchResidentController.text = "";
+
+      Get.snackbar("Message", updateParkingModel.message.toString());
+      Navigator.of(context!).pop();
+      // Get.offNamed(assignedParking, arguments: user);
+    } else {
+      errorUpdatingParking.value = res.toString();
+      loadingUpdatingParking.value = false;
+      Get.snackbar("Error", errorUpdatingParking.value);
+    }
+  }
+
   Future<GetAreaAndSlotsModel> getParkingSlots(
       {String? societyId, String? area = "", String? status = ""}) async {
     errorGettingParking.value = "";
@@ -100,6 +132,8 @@ class ParkingManagementController extends GetxController {
 
     if (res is GetAreaAndSlotsModel) {
       getParkingSlotsModel = res;
+
+      filterResidentList.value = getParkingSlotsModel.data!.resident ?? [];
 
       return getParkingSlotsModel;
     } else {

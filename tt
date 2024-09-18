@@ -42,7 +42,7 @@ class AssignedParking extends StatelessWidget {
                   () => controller.loading.value
                       ? Center(
                           child: Padding(
-                          padding: const EdgeInsets.only(top: 350),
+                          padding: const EdgeInsets.only(top: 300),
                           child: CircularIndicatorUnderWhiteBox(),
                         ))
                       : Column(
@@ -73,56 +73,73 @@ class AssignedParking extends StatelessWidget {
                             ),
                             Container(
                               height: 60,
-                              // color: Colors.red,
                               child: ListView.builder(
                                 scrollDirection:
                                     Axis.horizontal, // Set to horizontal
-                                itemCount: controller.getParkingSlotsModel.data!
-                                    .parkingLots?.length,
+                                itemCount: controller
+                                    .getParkingSlotsModel
+                                    .data!
+                                    .areas!
+                                    .length, // No need to add extra count
                                 itemBuilder: (context, i) {
                                   double rightPadding = i ==
                                           controller.getParkingSlotsModel.data!
-                                                  .parkingLots!.length -
+                                                  .areas!.length -
                                               1
                                       ? 10
                                       : 0;
+
                                   return GestureDetector(
                                     onTap: () {
                                       controller
                                           .parkingAreaSelectedIndex.value = i;
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.only(
-                                          left: i == 0 ? 10 : 10,
-                                          top: 10,
-                                          bottom: 10,
-                                          right: rightPadding),
-                                      width: 100,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: controller
-                                                    .parkingAreaSelectedIndex
-                                                    .value ==
-                                                i
-                                            ? AppColors.appThem
-                                            : AppColors.globalWhite,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Center(
-                                        child: Text(
+
+                                      controller.parkingLotName.value =
                                           controller.getParkingSlotsModel.data!
-                                                  .parkingLots?[i].name ??
-                                              "",
-                                          style: TextStyle(
-                                              color: controller
-                                                          .parkingAreaSelectedIndex
-                                                          .value ==
-                                                      i
-                                                  ? AppColors.globalWhite
-                                                  : AppColors.textBlack),
-                                        ),
-                                      ),
-                                    ),
+                                              .areas![i];
+
+                                      controller.getParkingSlots(
+                                          societyId: controller.user.societyid
+                                              .toString(),
+                                          area: controller.parkingLotName.value,
+                                          status:
+                                              controller.selectedStatus.value);
+                                    },
+                                    child: Obx(() => Container(
+                                          margin: EdgeInsets.only(
+                                            left: 10,
+                                            top: 10,
+                                            bottom: 10,
+                                            right: rightPadding,
+                                          ),
+                                          width: 100,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: controller
+                                                        .parkingAreaSelectedIndex
+                                                        .value ==
+                                                    i
+                                                ? AppColors.appThem
+                                                : AppColors.globalWhite,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              controller.getParkingSlotsModel
+                                                      .data!.areas?[i] ??
+                                                  "",
+                                              style: TextStyle(
+                                                color: controller
+                                                            .parkingAreaSelectedIndex
+                                                            .value ==
+                                                        i
+                                                    ? AppColors.globalWhite
+                                                    : AppColors.textBlack,
+                                              ),
+                                            ),
+                                          ),
+                                        )),
                                   );
                                 },
                               ),
@@ -147,58 +164,139 @@ class AssignedParking extends StatelessWidget {
                                         width: 1.0,
                                       ),
                                     ),
-                                    child: DropdownButtonFormField<String>(
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                      ),
+                                    child: Obx(() {
+                                      // Ensure the status list is not null or empty
+                                      var statusList = controller
+                                              .getParkingSlotsModel
+                                              .data
+                                              ?.status ??
+                                          [];
 
-                                      value: controller.selectedStatus.value,
-                                      items: ['All', 'available', 'assigned']
-                                          .map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                      onChanged: (newValue) {
+                                      var formattedStatusList = statusList
+                                          .map((status) => status
+                                              .toLowerCase()
+                                              .replaceAll('-', ''))
+                                          .toList();
+
+                                      if (formattedStatusList.isNotEmpty &&
+                                          controller
+                                              .selectedStatus.value.isEmpty) {
                                         controller.selectedStatus.value =
-                                            newValue!;
+                                            formattedStatusList.first;
+                                      }
 
-                                        // controller.filterSlotsByStatusAndName(
-                                        //     controller.selectedStatus.value,
-                                        //     controller
-                                        //             .getParkingSlotsModel
-                                        //             .data!
-                                        //             .parkingLots![controller
-                                        //                 .parkingAreaSelectedIndex
-                                        //                 .value]
-                                        //             .name ??
-                                        //         "");
-                                      },
-                                      icon: Icon(Icons
-                                          .arrow_drop_down), // Custom dropdown icon
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
+                                      return DropdownButtonFormField<String>(
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                        ),
+                                        // Use the formatted selectedStatus value
+                                        value: controller.selectedStatus.value,
+                                        items: formattedStatusList
+                                            .map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                        onChanged: (newValue) {
+                                          if (newValue != null) {
+                                            controller.selectedStatus.value =
+                                                newValue;
+
+                                            controller.getParkingSlots(
+                                                societyId: controller
+                                                    .user.societyid
+                                                    .toString(),
+                                                status: controller
+                                                    .selectedStatus.value,
+                                                area: controller
+                                                    .parkingLotName.value);
+                                          }
+                                        },
+                                        icon: Icon(Icons.arrow_drop_down),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16.0,
+                                        ),
+                                      );
+                                    }),
                                   ),
                                   Spacer(),
-                                  Text(
-                                    "Total Capacity :  ",
-                                    style: reusableTextStyle(
-                                        textStyle: GoogleFonts.dmSans(),
-                                        fontSize: 14.0,
-                                        color: AppColors.textBlack,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "",
-                                    style: reusableTextStyle(
-                                        textStyle: GoogleFonts.dmSans(),
-                                        fontSize: 14.0,
-                                        color: AppColors.textBlack,
-                                        fontWeight: FontWeight.bold),
+                                  Row(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Available Slots",
+                                            style: reusableTextStyle(
+                                                textStyle: GoogleFonts.dmSans(),
+                                                fontSize: 12.0,
+                                                color: AppColors.textBlack,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                          Text(
+                                            "Occupied",
+                                            style: reusableTextStyle(
+                                                textStyle: GoogleFonts.dmSans(),
+                                                fontSize: 12.0,
+                                                color: AppColors.textBlack,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                          Text(
+                                            "Un-Ocuupied",
+                                            style: reusableTextStyle(
+                                                textStyle: GoogleFonts.dmSans(),
+                                                fontSize: 12.0,
+                                                color: AppColors.textBlack,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: 40,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            controller.getParkingSlotsModel.data
+                                                    ?.counts?.availableSlots
+                                                    .toString() ??
+                                                "",
+                                            style: reusableTextStyle(
+                                                textStyle: GoogleFonts.dmSans(),
+                                                fontSize: 12.0,
+                                                color: AppColors.textBlack,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            controller.getParkingSlotsModel.data
+                                                    ?.counts?.occupiedSlots
+                                                    .toString() ??
+                                                "",
+                                            style: reusableTextStyle(
+                                                textStyle: GoogleFonts.dmSans(),
+                                                fontSize: 12.0,
+                                                color: AppColors.textBlack,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            controller.getParkingSlotsModel.data
+                                                    ?.counts?.unOccupiedSlots
+                                                    .toString() ??
+                                                "",
+                                            style: reusableTextStyle(
+                                                textStyle: GoogleFonts.dmSans(),
+                                                fontSize: 12.0,
+                                                color: AppColors.textBlack,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                   SizedBox(
                                     width: 20,
@@ -206,229 +304,286 @@ class AssignedParking extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            // controller.filteredSlots.length == 0
-                            //     ? Center(
-                            //         child: Padding(
-                            //         padding: const EdgeInsets.only(top: 150),
-                            //         child: Text(
-                            //           "No Data Found",
-                            //           style: reusableTextStyle(
-                            //               textStyle: GoogleFonts.dmSans(),
-                            //               fontSize: 14.0,
-                            //               color: AppColors.textBlack,
-                            //               fontWeight: FontWeight.bold),
-                            //         ),
-                            //       ))
-                            //     : Container(
-                            //         margin: EdgeInsets.all(12),
-                            //         height: 400,
-                            //         child: GridView.builder(
-                            //             gridDelegate:
-                            //                 const SliverGridDelegateWithMaxCrossAxisExtent(
-                            //                     maxCrossAxisExtent: 160,
-                            //                     childAspectRatio: 2 / 2.3,
-                            //                     crossAxisSpacing: 10,
-                            //                     mainAxisSpacing: 10),
-                            //             itemCount:
-                            //                   controller
-                            //                       .getParkingSlotsModel
-                            //                       .data!
-                            //                       .parkingLots.,
-                            //             itemBuilder: (BuildContext ctx, index) {
-                            //               return Container(
-                            //                 alignment: Alignment.center,
-                            //                 decoration: BoxDecoration(
-                            //                     color: AppColors.globalWhite,
-                            //                     borderRadius:
-                            //                         BorderRadius.circular(15)),
-                            //                 child: Column(
-                            //                   mainAxisAlignment:
-                            //                       MainAxisAlignment.start,
-                            //                   crossAxisAlignment:
-                            //                       CrossAxisAlignment.start,
-                            //                   children: [
-                            //                     Align(
-                            //                       alignment: Alignment.topRight,
-                            //                       child: Container(
-                            //                         decoration: BoxDecoration(
-                            //                           color: controller
-                            //                                       .filteredSlots[
-                            //                                           index]
-                            //                                       .status ==
-                            //                                   "available"
-                            //                               ? Colors.green
-                            //                               : Colors.red,
-                            //                           borderRadius:
-                            //                               BorderRadius.only(
-                            //                             topRight:
-                            //                                 Radius.circular(
-                            //                                     12.0),
-                            //                           ),
-                            //                         ),
-                            //                         child: Padding(
-                            //                           padding:
-                            //                               const EdgeInsets.only(
-                            //                                   left: 8,
-                            //                                   right: 8),
-                            //                           child: Text(
-                            //                             controller
-                            //                                 .filteredSlots[
-                            //                                     index]
-                            //                                 .status
-                            //                                 .toString(),
-                            //                             style: TextStyle(
-                            //                                 color: AppColors
-                            //                                     .globalWhite),
-                            //                           ),
-                            //                         ),
-                            //                       ),
-                            //                     ),
-                            //                     SizedBox(
-                            //                       height: 10,
-                            //                     ),
-                            //                     Center(
-                            //                       child: Image.asset(
-                            //                         AppImages.parkinng,
-                            //                         height: 40,
-                            //                       ),
-                            //                     ),
-                            //                     Padding(
-                            //                       padding:
-                            //                           const EdgeInsets.only(
-                            //                               top: 10,
-                            //                               left: 10,
-                            //                               right: 10),
-                            //                       child: Row(
-                            //                         children: [
-                            //                           Text(
-                            //                             "Slot No",
-                            //                             style: reusableTextStyle(
-                            //                                 textStyle:
-                            //                                     GoogleFonts
-                            //                                         .dmSans(),
-                            //                                 fontSize: 11.0,
-                            //                                 color: AppColors
-                            //                                     .textBlack,
-                            //                                 fontWeight:
-                            //                                     FontWeight
-                            //                                         .bold),
-                            //                           ),
-                            //                           Spacer(),
-                            //                           Text(
-                            //                             controller
-                            //                                 .filteredSlots[
-                            //                                     index]
-                            //                                 .slotNumber
-                            //                                 .toString(),
-                            //                             style: reusableTextStyle(
-                            //                                 textStyle:
-                            //                                     GoogleFonts
-                            //                                         .dmSans(),
-                            //                                 fontSize: 12.0,
-                            //                                 color: AppColors
-                            //                                     .textBlack,
-                            //                                 fontWeight:
-                            //                                     FontWeight
-                            //                                         .bold),
-                            //                           ),
-                            //                         ],
-                            //                       ),
-                            //                     ),
-                            //                     Padding(
-                            //                       padding:
-                            //                           const EdgeInsets.only(
-                            //                               left: 10,
-                            //                               right: 10,
-                            //                               top: 10),
-                            //                       child: Column(
-                            //                         crossAxisAlignment:
-                            //                             CrossAxisAlignment
-                            //                                 .start,
-                            //                         children: [
-                            //                           Text(
-                            //                             "Resident :",
-                            //                             style: reusableTextStyle(
-                            //                                 textStyle:
-                            //                                     GoogleFonts
-                            //                                         .dmSans(),
-                            //                                 fontSize: 12.0,
-                            //                                 color: AppColors
-                            //                                     .textBlack,
-                            //                                 fontWeight:
-                            //                                     FontWeight
-                            //                                         .bold),
-                            //                           ),
-                            //                           Text(
-                            //                             controller
-                            //                                     .filteredSlots[
-                            //                                         index]
-                            //                                     .userName ??
-                            //                                 "NA",
-                            //                             style: reusableTextStyle(
-                            //                                 textStyle:
-                            //                                     GoogleFonts
-                            //                                         .dmSans(),
-                            //                                 fontSize: 12.0,
-                            //                                 color:
-                            //                                     AppColors.dark,
-                            //                                 fontWeight:
-                            //                                     FontWeight
-                            //                                         .bold),
-                            //                           ),
-                            //                         ],
-                            //                       ),
-                            //                     ),
-                            //                     controller.filteredSlots[index]
-                            //                                 .status ==
-                            //                             "available"
-                            //                         ? Center(
-                            //                             child: Container(
-                            //                               margin:
-                            //                                   EdgeInsets.only(
-                            //                                       top: 10),
-                            //                               height: 30,
-                            //                               child: ElevatedButton(
-                            //                                   style: ElevatedButton.styleFrom(
-                            //                                       backgroundColor:
-                            //                                           Colors
-                            //                                               .green,
-                            //                                       shape: RoundedRectangleBorder(
-                            //                                           borderRadius:
-                            //                                               BorderRadius.circular(
-                            //                                                   8))),
-                            //                                   onPressed: () {
-                            //                                     _showAssignParkingDialog(
-                            //                                         context:
-                            //                                             context,
-                            //                                         slotId: controller
-                            //                                             .filteredSlots[
-                            //                                                 index]
-                            //                                             .id,
-                            //                                         startDate:
-                            //                                             DateTime
-                            //                                                 .now(),
-                            //                                         slotNo: controller
-                            //                                             .filteredSlots[
-                            //                                                 index]
-                            //                                             .slotNumber
-                            //                                             .toString());
-                            //                                   },
-                            //                                   child: Text(
-                            //                                     "Assign Parking",
-                            //                                     style: TextStyle(
-                            //                                         color: AppColors
-                            //                                             .globalWhite,
-                            //                                         fontSize:
-                            //                                             11),
-                            //                                   )),
-                            //                             ),
-                            //                           )
-                            //                         : SizedBox()
-                            //                   ],
-                            //                 ),
-                            //               );
-                            //             }),
-                            //       ),
+                            controller.getParkingSlotsModel.data?.slots
+                                        ?.length ==
+                                    0
+                                ? Center(
+                                    child: Padding(
+                                    padding: const EdgeInsets.only(top: 150),
+                                    child: Text(
+                                      "No Data Found",
+                                      style: reusableTextStyle(
+                                          textStyle: GoogleFonts.dmSans(),
+                                          fontSize: 14.0,
+                                          color: AppColors.textBlack,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ))
+                                : Container(
+                                    margin: EdgeInsets.all(12),
+                                    // height: media,
+                                    child: GridView.builder(
+                                        shrinkWrap: true,
+                                        gridDelegate:
+                                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                                                maxCrossAxisExtent: 160,
+                                                childAspectRatio: 2 / 2.3,
+                                                crossAxisSpacing: 10,
+                                                mainAxisSpacing: 10),
+                                        itemCount: controller
+                                            .getParkingSlotsModel
+                                            .data
+                                            ?.slots
+                                            ?.length,
+                                        itemBuilder: (BuildContext ctx, index) {
+                                          return Container(
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                                color: AppColors.globalWhite,
+                                                borderRadius:
+                                                    BorderRadius.circular(15)),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Align(
+                                                  alignment: Alignment.topRight,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: controller
+                                                                  .getParkingSlotsModel
+                                                                  .data
+                                                                  ?.slots?[
+                                                                      index]
+                                                                  .status ==
+                                                              "available"
+                                                          ? Colors.green
+                                                          : controller
+                                                                      .getParkingSlotsModel
+                                                                      .data
+                                                                      ?.slots?[
+                                                                          index]
+                                                                      .status ==
+                                                                  "unoccupied"
+                                                              ? Colors.orange
+                                                              : Colors.red,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        topRight:
+                                                            Radius.circular(
+                                                                12.0),
+                                                      ),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8,
+                                                              right: 8),
+                                                      child: Text(
+                                                        controller
+                                                                .getParkingSlotsModel
+                                                                .data
+                                                                ?.slots?[index]
+                                                                .status
+                                                                .toString() ??
+                                                            "",
+                                                        style: TextStyle(
+                                                            color: AppColors
+                                                                .globalWhite),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Center(
+                                                  child: Image.asset(
+                                                    AppImages.parkinng,
+                                                    height: 40,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        "Slot No",
+                                                        style: reusableTextStyle(
+                                                            textStyle:
+                                                                GoogleFonts
+                                                                    .dmSans(),
+                                                            fontSize: 11.0,
+                                                            color: AppColors
+                                                                .textBlack,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      Spacer(),
+                                                      Text(
+                                                        controller
+                                                                .getParkingSlotsModel
+                                                                .data
+                                                                ?.slots?[index]
+                                                                .slotNumber
+                                                                .toString() ??
+                                                            "",
+                                                        style: reusableTextStyle(
+                                                            textStyle:
+                                                                GoogleFonts
+                                                                    .dmSans(),
+                                                            fontSize: 12.0,
+                                                            color: AppColors
+                                                                .textBlack,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10,
+                                                          right: 10,
+                                                          top: 10),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        "Resident :",
+                                                        style: reusableTextStyle(
+                                                            textStyle:
+                                                                GoogleFonts
+                                                                    .dmSans(),
+                                                            fontSize: 12.0,
+                                                            color: AppColors
+                                                                .textBlack,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      Text(
+                                                        controller
+                                                                .getParkingSlotsModel
+                                                                .data
+                                                                ?.slots?[index]
+                                                                .userName ??
+                                                            "NA",
+                                                        style: reusableTextStyle(
+                                                            textStyle:
+                                                                GoogleFonts
+                                                                    .dmSans(),
+                                                            fontSize: 12.0,
+                                                            color:
+                                                                AppColors.dark,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                controller
+                                                            .getParkingSlotsModel
+                                                            .data
+                                                            ?.slots?[index]
+                                                            .status ==
+                                                        "available"
+                                                    ? Center(
+                                                        child: Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 10),
+                                                          height: 30,
+                                                          child: ElevatedButton(
+                                                              style: ElevatedButton.styleFrom(
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8))),
+                                                              onPressed: () {
+                                                                _showAssignParkingDialog(
+                                                                    context:
+                                                                        context,
+                                                                    slotId: controller
+                                                                        .getParkingSlotsModel
+                                                                        .data
+                                                                        ?.slots?[
+                                                                            index]
+                                                                        .id,
+                                                                    startDate:
+                                                                        DateTime
+                                                                            .now(),
+                                                                    slotNo: controller
+                                                                        .getParkingSlotsModel
+                                                                        .data
+                                                                        ?.slots?[
+                                                                            index]
+                                                                        .slotNumber
+                                                                        .toString());
+                                                              },
+                                                              child: Text(
+                                                                "Assign Parking",
+                                                                style: TextStyle(
+                                                                    color: AppColors
+                                                                        .globalWhite,
+                                                                    fontSize:
+                                                                        11),
+                                                              )),
+                                                        ),
+                                                      )
+                                                    : controller
+                                                                .getParkingSlotsModel
+                                                                .data
+                                                                ?.slots?[index]
+                                                                .status ==
+                                                            "unoccupied"
+                                                        ? Center(
+                                                            child: Container(
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      top: 10),
+                                                              height: 30,
+                                                              child:
+                                                                  ElevatedButton(
+                                                                      style: ElevatedButton.styleFrom(
+                                                                          backgroundColor: Colors
+                                                                              .green,
+                                                                          shape: RoundedRectangleBorder(
+                                                                              borderRadius: BorderRadius.circular(
+                                                                                  8))),
+                                                                      onPressed:
+                                                                          () {},
+                                                                      child:
+                                                                          Text(
+                                                                        "Re Assign Parking",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                AppColors.globalWhite,
+                                                                            fontSize: 11),
+                                                                      )),
+                                                            ),
+                                                          )
+                                                        : SizedBox()
+                                              ],
+                                            ),
+                                          );
+                                        }),
+                                  ),
                           ],
                         ),
                 ),
