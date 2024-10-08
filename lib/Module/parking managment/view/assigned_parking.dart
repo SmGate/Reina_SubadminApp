@@ -329,7 +329,7 @@ class AssignedParking extends StatelessWidget {
                                       gridDelegate:
                                           SliverGridDelegateWithMaxCrossAxisExtent(
                                         maxCrossAxisExtent: gridWidth,
-                                        childAspectRatio: 1,
+                                        childAspectRatio: 0.9,
                                         crossAxisSpacing: 10,
                                         mainAxisSpacing: 10,
                                       ),
@@ -636,33 +636,72 @@ class AssignedParking extends StatelessWidget {
                         labelText: "Search Resident Here",
                         validator: emptyStringValidator,
                         onChanged: (v) {
-                          if (v.length == 0) {
-                            controller.isParkingAreaSelected.value = false;
-                          } else {
-                            controller.isParkingAreaSelected.value = true;
-                            controller.filterEntries(v);
-                          }
+                          controller.searchResidentValue.value = v;
                         },
                       ),
                       SizedBox(height: 20),
                       Container(
                         height: 150,
                         child: ListView.builder(
-                          itemCount: controller.filterResidentList.length,
+                          padding: EdgeInsets.all(0),
+                          itemCount: controller
+                              .getParkingSlotsModel.data?.resident?.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              onTap: () {
-                                controller.searchResidentController.text =
-                                    "${controller.filterResidentList[index].firstname ?? ""}  ${controller.filterResidentList[index].lastname ?? ""}";
+                            return Obx(() {
+                              if (controller.getParkingSlotsModel.data
+                                      ?.resident![index].firstname!
+                                      .toLowerCase()
+                                      .contains(controller
+                                          .searchResidentValue.value) ??
+                                  false ||
+                                      controller.searchResidentValue.value
+                                          .isNotEmpty) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      controller.searchResidentController.text =
+                                          "${controller.getParkingSlotsModel.data?.resident![index].firstname ?? ""}  ${controller.getParkingSlotsModel.data?.resident![index].lastname ?? ""}";
 
-                                controller.residentId = controller
-                                    .filterResidentList[index].residentid;
+                                      controller.residentId = controller
+                                          .getParkingSlotsModel
+                                          .data
+                                          ?.resident![index]
+                                          .residentid;
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      child: Text(
+                                          "${controller.getParkingSlotsModel.data?.resident![index].firstname ?? ""}  ${controller.getParkingSlotsModel.data?.resident![index].lastname ?? ""}"),
+                                    ),
+                                  ),
+                                );
+                              } else if (controller
+                                  .searchResidentValue.value.isEmpty) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      controller.searchResidentController.text =
+                                          "${controller.getParkingSlotsModel.data?.resident![index].firstname ?? ""}  ${controller.getParkingSlotsModel.data?.resident![index].lastname ?? ""}";
 
-                                controller.isParkingAreaSelected.value = false;
-                              },
-                              leading: Text(
-                                  "${controller.filterResidentList[index].firstname ?? ""}  ${controller.filterResidentList[index].lastname ?? ""}"),
-                            );
+                                      controller.residentId = controller
+                                          .getParkingSlotsModel
+                                          .data
+                                          ?.resident![index]
+                                          .residentid;
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      child: Text(
+                                          "${controller.getParkingSlotsModel.data?.resident![index].firstname ?? ""}  ${controller.getParkingSlotsModel.data?.resident![index].lastname ?? ""}"),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return Container();
+                              }
+                            });
                           },
                         ),
                       ),
@@ -728,46 +767,82 @@ class AssignedParking extends StatelessWidget {
                   labelText: "Search Resident ",
                   validator: emptyStringValidator,
                   onChanged: (v) {
-                    if (v.length == 0) {
-                      controller.isParkingAreaSelected.value = false;
-                    } else {
-                      controller.isParkingAreaSelected.value = true;
-                      controller.filterEntries(v);
-                    }
+                    controller.searchResidentValue.value = v;
                   },
                 ),
-                Obx(() => controller.isParkingAreaSelected.value
-                    ? Column(
-                        children: [
-                          SizedBox(height: 20),
-                          Container(
-                            height: 60,
-                            child: ListView.builder(
-                              itemCount: controller.filterResidentList.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
+                Column(
+                  children: [
+                    SizedBox(height: 20),
+                    Container(
+                      height: 80,
+                      color: AppColors.background,
+                      child: ListView.builder(
+                        itemCount: controller
+                            .getParkingSlotsModel.data?.resident?.length,
+                        itemBuilder: (context, index) {
+                          return Obx(() {
+                            if (controller.getParkingSlotsModel.data
+                                    ?.resident![index].firstname!
+                                    .toLowerCase()
+                                    .contains(
+                                        controller.searchResidentValue.value) ??
+                                false ||
+                                    controller
+                                        .searchResidentValue.value.isNotEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
                                   onTap: () {
                                     controller.searchResidentController.text =
-                                        "${controller.filterResidentList[index].firstname ?? ""}  ${controller.filterResidentList[index].lastname ?? ""}";
+                                        "${controller.getParkingSlotsModel.data?.resident![index].firstname ?? ""}  ${controller.getParkingSlotsModel.data?.resident![index].lastname ?? ""}";
 
                                     controller.residentId = controller
-                                        .filterResidentList[index].residentid;
-
-                                    controller.isParkingAreaSelected.value =
-                                        false;
+                                        .getParkingSlotsModel
+                                        .data
+                                        ?.resident![index]
+                                        .residentid;
                                   },
-                                  leading: Text(
-                                      "${controller.filterResidentList[index].firstname ?? ""}  ${controller.filterResidentList[index].lastname ?? ""}"),
-                                );
-                              },
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                        ],
-                      )
-                    : SizedBox(
-                        height: 20,
-                      )),
+                                  child: Container(
+                                    height: 30,
+                                    child: Text(
+                                        "${controller.getParkingSlotsModel.data?.resident![index].firstname ?? ""}  ${controller.getParkingSlotsModel.data?.resident![index].lastname ?? ""}"),
+                                  ),
+                                ),
+                              );
+                            } else if (controller
+                                .searchResidentValue.value.isEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    controller.searchResidentController.text =
+                                        "${controller.getParkingSlotsModel.data?.resident![index].firstname ?? ""}  ${controller.getParkingSlotsModel.data?.resident![index].lastname ?? ""}";
+
+                                    controller.residentId = controller
+                                        .getParkingSlotsModel
+                                        .data
+                                        ?.resident![index]
+                                        .residentid;
+                                  },
+                                  child: Container(
+                                    height: 30,
+                                    child: Text(
+                                        "${controller.getParkingSlotsModel.data?.resident![index].firstname ?? ""}  ${controller.getParkingSlotsModel.data?.resident![index].lastname ?? ""}"),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    )
+                  ],
+                ),
                 Row(
                   children: [
                     Column(
@@ -803,13 +878,17 @@ class AssignedParking extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          occupiedBy ?? "NA",
-                          style: reusableTextStyle(
-                              textStyle: GoogleFonts.dmSans(),
-                              fontSize: 12.0,
-                              color: AppColors.dark,
-                              fontWeight: FontWeight.normal),
+                        SizedBox(
+                          width: 120,
+                          child: Text(
+                            occupiedBy ?? "NA",
+                            style: reusableTextStyle(
+                                textStyle: GoogleFonts.dmSans(),
+                                fontSize: 12.0,
+                                color: AppColors.dark,
+                                fontWeight: FontWeight.normal),
+                            maxLines: 1,
+                          ),
                         ),
                         Text(
                           slotNo ?? "NA",

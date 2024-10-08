@@ -18,10 +18,8 @@ class NotificationsController extends GetxController {
   late final User userData;
   List<ReportNotification> li = [];
 
- 
   @override
   void onInit() {
- 
     super.onInit();
 
     userData = user;

@@ -92,14 +92,17 @@ class ReportsScreenCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        heading!,
-                        maxLines: 1,
-                        style: reusableTextStyle(
-                          textStyle: GoogleFonts.dmSans(),
-                          fontSize: 18.0,
-                          color: AppColors.textBlack,
-                          fontWeight: FontWeight.bold,
+                      SizedBox(
+                        width: 180,
+                        child: Text(
+                          heading ?? "",
+                          maxLines: 2,
+                          style: reusableTextStyle(
+                            textStyle: GoogleFonts.dmSans(),
+                            fontSize: 18.0,
+                            color: AppColors.textBlack,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       6.ph,

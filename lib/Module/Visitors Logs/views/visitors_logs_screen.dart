@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use, must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:societyadminapp/Module/View%20Residents/components/Detail_shown_dialog_box.dart';
@@ -48,26 +47,22 @@ class _VisitorsLogsScreenState extends State<VisitorsLogsScreen> {
                       arguments: visitorsLogsController.user);
                 },
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: 10, top: 20, left: 20),
-                    child: SizedBox(
-                      width: 200,
-                      child: MyTextFormField(
-                        padding: EdgeInsets.all(0),
-                        hintText: "Search Name",
-                        labelText: "Search Name",
-                        onChanged: (v) {
-                          setState(() {
-                            visitorsLogsController.searchValue.value = v;
-                          });
-                        },
-                      ),
-                    ),
-                  )
-                ],
+              Padding(
+                padding: const EdgeInsets.only(
+                    bottom: 10, top: 20, left: 20, right: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: MyTextFormField(
+                    padding: EdgeInsets.all(0),
+                    hintText: "Search Name",
+                    labelText: "Search Name",
+                    onChanged: (v) {
+                      setState(() {
+                        visitorsLogsController.searchValue.value = v;
+                      });
+                    },
+                  ),
+                ),
               ),
               Obx(() {
                 if (visitorsLogsController.isLoading.value &&
@@ -164,13 +159,15 @@ class VisitorsCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(height: 20),
-                        Text(
-                          visitor?.name ?? "",
-                          style: reusableTextStyle(
-                            textStyle: GoogleFonts.dmSans(),
-                            fontSize: 18.0,
-                            color: AppColors.textBlack,
-                            fontWeight: FontWeight.bold,
+                        SizedBox(
+                          child: Text(
+                            visitor?.name ?? "",
+                            style: reusableTextStyle(
+                              textStyle: GoogleFonts.dmSans(),
+                              fontSize: 18.0,
+                              color: AppColors.textBlack,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         SizedBox(height: 20),
@@ -247,75 +244,76 @@ class VisitorsCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               decoration: BoxDecoration(shape: BoxShape.circle),
               child: Image.asset(AppImages.user, height: 50),
             ),
+            SizedBox(
+              width: 20,
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 21.w),
-                  child: Row(
-                    children: [
-                      Text(
-                        visitor?.name ?? "",
-                        textAlign: TextAlign.center,
-                        style: reusableTextStyle(
-                          textStyle: GoogleFonts.dmSans(),
-                          fontSize: 16.0,
-                          color: AppColors.textBlack,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                SizedBox(
+                  width: 180,
+                  child: Text(
+                    textAlign: TextAlign.start,
+                    visitor?.name ?? "",
+                    style: reusableTextStyle(
+                      textStyle: GoogleFonts.dmSans(),
+                      fontSize: 16.0,
+                      color: AppColors.textBlack,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Visitor Type"),
-                          Text("Vehicle No"),
-                        ],
-                      ),
-                      SizedBox(width: 40),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            visitor?.visitortype ?? "",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: reusableTextStyle(
-                              textStyle: GoogleFonts.dmSans(),
-                              fontSize: 14.0,
-                              color: AppColors.dark,
-                              fontWeight: FontWeight.normal,
-                            ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Visitor Type"),
+                        Text("Vehicle No"),
+                      ],
+                    ),
+                    SizedBox(width: 40),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          visitor?.visitortype ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: reusableTextStyle(
+                            textStyle: GoogleFonts.dmSans(),
+                            fontSize: 14.0,
+                            color: AppColors.dark,
+                            fontWeight: FontWeight.normal,
                           ),
-                          Text(
-                            visitor?.vechileno ?? "",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: reusableTextStyle(
-                              textStyle: GoogleFonts.dmSans(),
-                              fontSize: 14.0,
-                              color: AppColors.dark,
-                              fontWeight: FontWeight.normal,
-                            ),
+                        ),
+                        Text(
+                          visitor?.vechileno ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: reusableTextStyle(
+                            textStyle: GoogleFonts.dmSans(),
+                            fontSize: 14.0,
+                            color: AppColors.dark,
+                            fontWeight: FontWeight.normal,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -29,7 +29,7 @@ class ParkingManagementController extends GetxController {
   RxInt parkingAreaSelectedIndex = 0.obs;
   RxString errorAssigningParking = "".obs;
   RxString errorGettingParking = "".obs;
-  RxList<Resident> filterResidentList = <Resident>[].obs;
+
   var assignParkingModel = AssignParkingModel();
   int? residentId;
   RxString selectedStatus = "".obs;
@@ -37,10 +37,10 @@ class ParkingManagementController extends GetxController {
 
   /// ALL BOOL NEEDED
   RxBool loading = false.obs;
-  RxBool isParkingAreaSelected = false.obs;
+
   RxBool loadingAddingParkingData = false.obs;
   RxBool loadingAssignParking = false.obs;
-
+  RxString searchResidentValue = "".obs;
   ////// REFRESH PARKING SLOTS DATA
   RxBool loading1 = false.obs;
   RxString errorRefreshingSlots = "".obs;
@@ -133,8 +133,6 @@ class ParkingManagementController extends GetxController {
     if (res is GetAreaAndSlotsModel) {
       getParkingSlotsModel = res;
 
-      filterResidentList.value = getParkingSlotsModel.data!.resident ?? [];
-
       return getParkingSlotsModel;
     } else {
       loading.value = false;
@@ -143,25 +141,6 @@ class ParkingManagementController extends GetxController {
     }
 
     return getParkingSlotsModel;
-  }
-
-  void filterEntries(String query) {
-    print("****************************************************${query}");
-    if (query.isEmpty) {
-      filterResidentList.value = getParkingSlotsModel.data!.resident!;
-      return;
-    }
-
-    List<Resident> filteredList = getParkingSlotsModel.data!.resident!
-        .where((entry) =>
-            entry.firstname!.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    if (filteredList.isEmpty) {
-      filterResidentList.value = [Resident(firstname: "Not Found")];
-    } else {
-      filterResidentList.value = filteredList;
-    }
   }
 
   void assignParking(
