@@ -44,6 +44,7 @@ class AppImages {
   static const String logout = "${basePath}logout.png";
   static const String visitorsLogs = "${basePath}visitor-log.png";
   static const String description = "${basePath}description.png";
+  static const String moderator = "${basePath}moderator.png";
   // ======================== S V G  P A T H ====================================
   static const String drawer = "${svgBasePath}drawer.svg";
   static const String carSvg = "${svgBasePath}carsvg.svg";

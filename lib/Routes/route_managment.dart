@@ -6,6 +6,8 @@ import 'package:societyadminapp/Module/AddSocietyDetail/Add%20Streets/View/add_s
 import 'package:societyadminapp/Module/AddSocietyDetail/Blocks/View/blocks.dart';
 import 'package:societyadminapp/Module/AddSocietyDetail/Streets/View/streets.dart';
 import 'package:societyadminapp/Module/AdminProfile/View/admin_profile_screen.dart';
+import 'package:societyadminapp/Module/Chat%20Moderator/views/all_resident.dart';
+import 'package:societyadminapp/Module/Chat%20Moderator/views/blocked_user.dart';
 import 'package:societyadminapp/Module/Events/View/events_screen.dart';
 import 'package:societyadminapp/Module/Events/View/view_event_images_screen.dart';
 import 'package:societyadminapp/Module/GateKepeer/View/gate_keeper_screen.dart';
@@ -468,6 +470,18 @@ class RouteManagement {
       GetPage(
           name: visitorsLogs,
           page: () => VisitorsLogsScreen(),
+          binding: ScreenBindings(),
+          transition: Transition.noTransition),
+
+      GetPage(
+          name: showAllResident,
+          page: () => AllResidentList(),
+          binding: ScreenBindings(),
+          transition: Transition.noTransition),
+
+      GetPage(
+          name: blockedUser,
+          page: () => BlockedUser(),
           binding: ScreenBindings(),
           transition: Transition.noTransition),
     ];

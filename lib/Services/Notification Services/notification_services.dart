@@ -119,5 +119,9 @@ class NotificationServices {
     } else if (message.data['type'] == 'Verification') {
       Get.toNamed(unverifiedresident, arguments: user);
     }
+
+    // else if (message.data['type'] == 'Moderator') {
+    //   Get.toNamed(showAllResident, arguments: user);
+    // }
   }
 }

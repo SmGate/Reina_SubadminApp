@@ -28,6 +28,8 @@ import 'package:societyadminapp/Module/AddSocietyDetail/SocietyBuildingFloor/Con
 import 'package:societyadminapp/Module/AddSocietyDetail/StreetOrBuilding/Controller/street_or_building_controller.dart';
 import 'package:societyadminapp/Module/AddSocietyDetail/Streets/Controller/street_controller.dart';
 import 'package:societyadminapp/Module/AddSocietyDetail/StructureType5HouseOrBuildingMiddleWare/Controller/structure_type5_house_or_building_controller.dart';
+import 'package:societyadminapp/Module/Chat%20Moderator/controller/blocked_user_controller.dart';
+import 'package:societyadminapp/Module/Chat%20Moderator/controller/moderation_controller.dart';
 import 'package:societyadminapp/Module/Events/Controller/event_screen_controller.dart';
 import 'package:societyadminapp/Module/GateKepeer/Controller/gate_keeper_controller.dart';
 import 'package:societyadminapp/Module/HomeScreen/Controller/home_screen_controller.dart';
@@ -150,11 +152,11 @@ class ScreenBindings extends Bindings {
     Get.lazyPut(() => ViewFinanceManager());
     Get.lazyPut(() => UpdateFinanceManagerDetails());
     Get.lazyPut(() => VisitoreDetailsScreenController());
-
+    Get.lazyPut(() => BlockedUserController());
     Get.lazyPut(() => VotingController());
     Get.lazyPut(() => SocietyRuleController());
     Get.lazyPut(() => ParkingManagementController());
-
+    Get.lazyPut(() => ModerationController());
     Get.lazyPut(() => VisitorsLogsController());
   }
 }
