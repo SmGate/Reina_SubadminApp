@@ -19,6 +19,7 @@ import 'package:societyadminapp/Module/Report%20Notifications/View/report_notifi
 import 'package:societyadminapp/Module/Society%20Apartment%20Bills/View/generate_society_apartment_bills.dart';
 import 'package:societyadminapp/Module/SocietyRules/view/add_society_rules.dart';
 import 'package:societyadminapp/Module/SocietyRules/view/society_rules.dart';
+import 'package:societyadminapp/Module/Splash/View/no_internet_screen.dart';
 import 'package:societyadminapp/Module/Splash/View/splash_screen.dart';
 import 'package:societyadminapp/Module/UnVerifiedResidents/View/apartment_resident_verification.dart';
 import 'package:societyadminapp/Module/UnVerifiedResidents/View/unverified_residents.dart';
@@ -477,6 +478,11 @@ class RouteManagement {
           name: showAllResident,
           page: () => AllResidentList(),
           binding: ScreenBindings(),
+          transition: Transition.noTransition),
+
+      GetPage(
+          name: noInternetConnection,
+          page: () => NoInternetConnectionScreen(),
           transition: Transition.noTransition),
 
       GetPage(

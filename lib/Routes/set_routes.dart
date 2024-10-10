@@ -110,3 +110,4 @@ const String addSocietyRule = '/add-society-rule';
 const String showAllResident = '/all_residents';
 const String visitorsLogs = '/visitor-logs';
 const String blockedUser = '/blocked-user';
+const String noInternetConnection = '/noInternetConnection';
