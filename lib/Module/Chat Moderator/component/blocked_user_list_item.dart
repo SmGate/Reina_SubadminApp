@@ -1,6 +1,5 @@
 // Assuming you have a Datum model with required fields
 import 'package:flutter/material.dart';
-
 import 'package:societyadminapp/Module/Chat%20Moderator/controller/blocked_user_controller.dart';
 import 'package:societyadminapp/Module/Chat%20Moderator/model/blocked_residents_model.dart';
 import 'package:societyadminapp/Widgets/custom_card.dart';
@@ -74,26 +73,29 @@ class BlockedUserItemsList extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 70),
                   child: SizedBox(
-                    height: 20,
-                    child: Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.appThem,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
+                      height: 20,
+                      child: Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.appThem,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
-                          ),
-                          onPressed: () {},
-                          child: Text(
-                            "Un-block",
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: AppColors.globalWhite,
+                            onPressed: () {
+                              controller.unBlockResident(
+                                  residentId:
+                                      blockerUsers.residentid.toString());
+                            },
+                            child: Text(
+                              "Un-block",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.globalWhite,
+                              ),
                             ),
-                          ),
-                        )),
-                  ),
+                          ))),
                 ),
               ],
             ),

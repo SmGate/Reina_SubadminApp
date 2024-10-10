@@ -127,6 +127,7 @@ class Api {
   static const String assignParking = baseUrl + "assign-parking";
   static const String getVisitorsLogs = baseUrl + "society-visitors";
   static const String updateParking = baseUrl + "update-parking";
-static const String makeModerator = baseUrl + "make-moderators";
+  static const String makeModerator = baseUrl + "make-moderators";
   static const String blockedResidents = baseUrl + "blocked-residents";
+  static const String unblockResidents = baseUrl + "unblock-resident";
 }

@@ -2,8 +2,10 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:societyadminapp/Module/Chat%20Moderator/model/blocked_residents_model.dart';
 import 'package:societyadminapp/Module/Chat%20Moderator/services/moderation_service.dart';
+import 'package:societyadminapp/Routes/set_routes.dart';
 
 import '../../../Model/User.dart';
+import '../model/unblocke_resident_model.dart';
 
 class BlockedUserController extends GetxController {
   var user = Get.arguments;
@@ -17,6 +19,11 @@ class BlockedUserController extends GetxController {
       PagingController(firstPageKey: 1);
   RxString searchVal = "".obs;
   var pageSize = 10;
+
+  //////  Unblock residents
+  var error = "";
+
+  var unblockResidentModel = UnBlockResidentsModel();
 
   void onInit() {
     super.onInit();
@@ -60,6 +67,26 @@ class BlockedUserController extends GetxController {
     } else {
       errorgettingBlockedUser.value = res.toString();
       Get.snackbar("Error", errorgettingBlockedUser.value);
+    }
+  }
+
+  ///////// unblock resident
+  unBlockResident({
+    String? residentId,
+  }) async {
+    error = "";
+
+    var res = await ModerationService.unBlockResident(
+      residentId: residentId,
+    );
+
+    if (res is UnBlockResidentsModel) {
+      unblockResidentModel = res;
+      Get.offNamed(homescreen, arguments: userdata);
+      Get.snackbar("Message", unblockResidentModel.message.toString());
+    } else {
+      error = res.toString();
+      Get.snackbar("Error", error);
     }
   }
 }
